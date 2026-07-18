@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXOVPN Shop</title>
+    <!-- اتصال به کتابخانه رسمی مینی‌اپ تلگرام -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 16px;
+            padding-bottom: 100px;
+        }
+
+        /* هدر مینی‌اپ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .brand-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: bold;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-welcome {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* کارت کیف پول */
+        .wallet-card {
+            background: var(--accent-gradient);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+
+        .wallet-info h3 {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .wallet-balance {
+            font-size: 24px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+
+        .charge-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .charge-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* تب‌ها */
+        .tabs {
+            display: flex;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* کارت‌های محصولات */
+        .plan-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.2s;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .plan-card:active {
+            transform: scale(0.98);
+            border-color: var(--accent-color);
+        }
+
+        .plan-details h4 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .plan-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 12px;
+        }
+
+        .plan-price-action {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .plan-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .buy-action-btn {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ناوبری ثابت پایین */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- هدر با نام کاربر -->
+    <div class="header">
+        <div class="brand-info">
+            <span class="brand-name">NEXOVPN SHOP</span>
+            <span class="user-welcome" id="user-welcome">خوش آمدید، کاربر عزیز</span>
+        </div>
+        <div style="font-size: 24px;">⚡</div>
+    </div>
+
+    <!-- بخش کیف پول واقعی -->
+    <div class="wallet-card">
+        <div class="wallet-info">
+            <h3>💰 موجودی کیف پول شما</h3>
+            <div class="wallet-balance" id="wallet-balance">۰ تومان</div>
+        </div>
+        <button class="charge-btn" onclick="chargeWallet()">➕ شارژ</button>
+    </div>
+
+    <!-- تب‌ها -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('user-plans', this)">🛍️ اشتراک معمولی</button>
+        <button class="tab-btn" onclick="switchTab('wholesale-plans', this)">📦 فروش عمده</button>
+    </div>
+
+    <!-- تب اشتراک معمولی -->
+    <div id="user-plans" class="tab-content active">
+        <div class="plan-card" onclick="buyPlan('🔥 پلن ۱ ماهه اقتصادی', 50000)">
+            <div class="plan-details">
+                <h4>🔥 پلن ۱ ماهه اقتصادی</h4>
+                <div class="plan-meta"><span>💾 ۱۰ گیگابایت</span> | <span>⏱️ ۳۰ روزه</span></div>
+            </div>
+            <div class="plan-price-action">
+                <span class="plan-price">۵۰,۰۰۰ ت</span>
+                <button class="buy-action-btn">خرید آنی</button>
+            </div>
+        </div>
+
+        <div class="plan-card" onclick="buyPlan('🚀 پلن ۱ ماهه نامحدود', 120000)">
+            <div class="plan-details">
+                <h4>🚀 پلن ۱ ماهه نامحدود</h4>
+                <div class="plan-meta"><span>💾 حجم نامحدود</span> | <span>⏱️ ۳۰ روزه</span></div>
+            </div>
+            <div class="plan-price-action">
+                <span class="plan-price">۱۲۰,۰۰۰ ت</span>
+                <button class="buy-action-btn">خرید آنی</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- تب فروش عمده -->
+    <div id="wholesale-plans" class="tab-content">
+        <div class="plan-card" onclick="buyPlan('📦 پکیج برنزی عمده', 350000)">
+            <div class="plan-details">
+                <h4>📦 پکیج برنزی (۱۰ اکانت)</h4>
+                <div class="plan-meta"><span>💾 ۳۰ گیگابایت</span> | <span>⏱️ ۳۰٪ تخفیف</span></div>
+            </div>
+            <div class="plan-price-action">
+                <span class="plan-price">۳۵۰,۰۰۰ ت</span>
+                <button class="buy-action-btn">خرید عمده</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- منوی پایین -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="location.reload()">
+            <span style="font-size:20px;">🏪</span><span>فروشگاه</span>
+        </div>
+        <div class="nav-item" onclick="openSupport()">
+            <span style="font-size:20px;">☎️</span><span>پشتیبانی</span>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // باز کردن کامل مینی‌اپ در صفحه
+
+        // دریافت نام واقعی کاربر از تلگرام
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('user-welcome').innerText = `خوش آمدید، ${user.first_name}`;
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // نمایش پاپ‌آپ رسمی و واقعی تلگرام برای خرید
+         Aurora
+        function buyPlan(planName, price) {
+            tg.showPopup({
+                title: '🛒 تایید فاکتور خرید',
+                message: `آیا از خرید "${planName}" به مبلغ ${price.toLocaleString('fa-IR')} تومان اطمینان دارید؟`,
+                buttons: [
+                    {id: 'buy', type: 'default', text: 'بله، خرید و پرداخت'},
+                    {id: 'cancel', type: 'cancel', text: 'انصراف'}
+                ]
+            }, function(buttonId) {
+                if (buttonId === 'buy') {
+                    // فرستادن اطلاعات خرید به ربات اصلی پایتون
+                    tg.sendData(JSON.stringify({action: 'buy_plan', name: planName, price: price}));
+                    tg.close();
+                }
+            });
+        }
+
+        function chargeWallet() {
+            tg.showAlert('💰 برای شارژ کیف پول، دکمه مینی‌اپ را ببندید و در منوی ربات دکمه "📋 اکانت من" را بزنید.');
+        }
+
+        function openSupport() {
+            tg.showAlert('☎️ جهت ارتباط با پشتیبانی، از دکمه ارتباط با پشتیبانی در منوی ربات استفاده کنید.');
+        }
+    </script>
+</body>
+</html>
